@@ -27,8 +27,7 @@
     "ms": "^2.1.3",
     "opusscript": "^0.0.8",
     "slash-calculator": "^1.0.1",
-    "tresenraya": "^0.0.7",
-    "ytdl-core": "^4.9.2"
+    "tresenraya": "^0.0.7"
   },
   "devDependencies": {
     "dotenv": "^10.0.0"
