@@ -14,8 +14,6 @@ client.distube = new Distube.default(client)
 
 const fs = require("fs");
 
-const { token } = require("./config");
-
 const { DiscordTogether } = require('discord-together');
 
 client.discordTogether = new DiscordTogether(client)
