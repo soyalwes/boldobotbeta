@@ -7,9 +7,5 @@ const Economia = new Schema({
         type: Number,
         default: 10
     },
-    DineroEnBanco: {
-        type: Number,
-        default: 0
-    }
 });
 module.exports = model('Economia', Economia)
