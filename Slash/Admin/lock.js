@@ -7,7 +7,13 @@ let cooldown = new Set();
 module.exports = {
   data: new SlashCommandBuilder()
     .setName("lock")
-    .setDescription("Bloque el canal en el que estes"),
+    .setDescription("Bloque el canal en el que estes")
+    .addChannelOption((option) =>
+      option
+        .setName("channel")
+        .setDescription("Bloqueé el un canal")
+        .setRequired(false)
+    ),
 
   async run(client, interaction) {
     if (cooldown.has(interaction.member.id)) {
@@ -20,6 +26,8 @@ module.exports = {
     setTimeout(() => {
       cooldown.delete(interaction.member.id);
     }, 5000);
+
+    let channel = interaction.options.getChannel("channel") || interaction.channel;
 
     let permsBot = interaction.guild.me.permissions.has("MANAGE_CHANNELS");
     if (!permsBot)
@@ -39,30 +47,33 @@ module.exports = {
       (r) => r.name === "@everyone"
     );
 
-    if(interaction.channel.editable) return interaction.reply({content:"No puedo bloquear este canal"})
+    if (channel.editable)
+      return interaction.reply({ content: "No puedo bloquear este canal" });
 
-    try{
-      interaction.channel.permissionOverwrites.edit(everyone, {
+    try {
+      channel.permissionOverwrites.edit(everyone, {
         SEND_MESSAGES: false,
         ADD_REACTIONS: false,
-    })
+      });
 
-    const embedLock = new MessageEmbed()
-    .setTitle("🔒|Lock")
-    .setDescription(`Canal bloqueado por ${interaction.member.user.tag}`)
-    .setColor("RED")
-    .setTimestamp()
-    interaction.reply({embeds:[embedLock]})
+      interaction.reply({content:"Listo", ephemeral: true})
+
+      const embedLock = new MessageEmbed()
+        .setTitle("🔒|Lock")
+        .setDescription(`Canal bloqueado por ${interaction.member.user.tag}`)
+        .setColor("RED")
+        .setTimestamp();
+      channel.send({ embeds: [embedLock] });
     } catch (e) {
-      console.log(e)
-      
-      const errorEmbed = new MessageEmbed()
-      .setTitle("❌|Error")
-      .setDescription("No se a podido bloquear el canal")
-      .setColor("RED")
-      .setTimestamp();
+      console.log(e);
 
-    interaction.reply({ embeds: [errorEmbed] });
+      const errorEmbed = new MessageEmbed()
+        .setTitle("❌|Error")
+        .setDescription("No se a podido bloquear el canal")
+        .setColor("RED")
+        .setTimestamp();
+
+      interaction.reply({ embeds: [errorEmbed] });
     }
   },
 };

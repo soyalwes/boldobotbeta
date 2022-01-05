@@ -35,8 +35,8 @@ module.exports = {
       .addField(
         "🧔|Apodo",
         `${
-          interaction.user.nickname
-            ? interaction.user.nickname
+          user.nickname
+            ? user.nickname
             : "No tiene apodo"
         }`
       )

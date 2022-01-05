@@ -2,7 +2,6 @@ const Discord = require("discord.js");
 const { SlashCommandBuilder } = require("@discordjs/builders");
 const { MessageEmbed } = require("discord.js");
 const warn = require("../../schema/warn-schema");
-const warnSchema = require("../../schema/warn-schema");
 
 let cooldown = new Set();
 
@@ -54,38 +53,29 @@ module.exports = {
         content: "No puedes quitarte el warn a ti mismo",
       });
 
-    let datos = await warn.findOne(
-      { guildId: interaction.guild.id },
-      { userId: interaction.guild.id }
+      const datos = await warn.findOne(
+        { userId: user.id ,  guildId: interaction.guild.id }
     );
-    if (!datos) {
-      let newDatos = new warnSchema({
-        userId: user.id,
-        warns: 0,
-      });
-      await newDatos.save();
 
-      return interaction.reply({
-        content:
-          "Los datos estan siendo guardados a mi base de datos usa el comando de nuevo",
-      });
+    if(!datos){
+        let newDatos = new warn({
+            guildId: interaction.guild.id,
+            userId: user.id,
+            warns: 0,
+        })
+        await newDatos.save()
+
+        return interaction.reply({ content: "Los datos estan siendo guardados a mi base de datos usa el comando de nuevo" })
     }
-    if (datos.warns === 0)
-      return interaction.reply({ content: "El usuario tiene 0 warns" });
 
-    await warn.findOneAndUpdate(
-      { userId: user.id },
-      { warns: warns - Number(1) }
-    );
+    await warn.findOneAndUpdate({userId: user.id}, { warns: datos.warns - 1})
 
-    const embedUnWarn = new MessageEmbed()
-      .setTitle("✅|UnWarn")
-      .setDescription(
-        `El staff: <@${interaction.member.id}>, quito el warn a: ${user}`
-      )
-      .setColor("GREEN")
-      .setTimestamp();
+    const embedWarn = new MessageEmbed()
+    .setTitle("⚠|Warn")
+    .setDescription(`${interaction.member} quito un warn a ${user}`)
+    .setColor("RED");
 
-    interaction.reply({ embeds: [embedUnWarn] });
-  },
-};
+    interaction.reply({embeds:[embedWarn]})
+
+    }
+}

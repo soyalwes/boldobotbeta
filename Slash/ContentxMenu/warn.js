@@ -1,31 +1,16 @@
 const Discord = require("discord.js");
-const { SlashCommandBuilder } = require("@discordjs/builders");
+const { ContextMenuCommandBuilder } = require("@discordjs/builders");
 const { MessageEmbed } = require("discord.js");
-const warn = require("../../schema/warn-schema");
+const warn = require("../../schema/warn-schema")
 
 let cooldown = new Set();
 
 module.exports = {
-  data: new SlashCommandBuilder()
-    .setName("warn")
-    .setDescription("Warnea a un usuario")
-    .addUserOption((option) =>
-      option
-        .setName("user")
-        .setDescription("Selecciona al usuario a warnear")
-        .setRequired(true)
-    )
-    .addStringOption((option) =>
-      option
-        .setName("reason")
-        .setDescription("Especifica la razon del warn")
-        .setRequired(false)
-    ),
+  data: new ContextMenuCommandBuilder().setName("Warn").setType(2),
 
   async run(client, interaction) {
     if (cooldown.has(interaction.member.id)) {
       interaction.reply(`Estas en cooldown`);
-
       return;
     }
 
@@ -33,10 +18,7 @@ module.exports = {
     setTimeout(() => {
       cooldown.delete(interaction.member.id);
     }, 5000);
-
-    let user = interaction.options.getMember("user");
-
-    let reasson = interaction.options.getString("reason") || "No hay una razon"
+    let user = await interaction.guild.members.fetch(interaction.targetId)
 
     let permsBot = interaction.guild.me.permissions.has("KICK_MEMBERS");
     if (!permsBot)
@@ -50,20 +32,20 @@ module.exports = {
         content: "No tienes los permisos suficientes\nPermiso: kickar miembros",
       });
 
-      if (
-        interaction.member.roles.highest.comparePositionTo(user.roles.highest) <=
-        0
-      )
-        return interaction.reply({
-          content: "No puedes quitar el warn a alguien que esta por encima de ti",
-        });
-  
-      if (user === interaction.member)
-        return interaction.reply({
-          content: "No puedes quitarte el warn a ti mismo",
-        });
+    if (
+      interaction.member.roles.highest.comparePositionTo(user.roles.highest) <=
+      0
+    )
+      return interaction.reply({
+        content: "No puedes quitar el warn a alguien que esta por encima de ti",
+      });
 
-    const datos = await warn.findOne(
+    if (user === interaction.member)
+      return interaction.reply({
+        content: "No puedes quitarte el warn a ti mismo",
+      });
+
+      const datos = await warn.findOne(
         { userId: user.id ,  guildId: interaction.guild.id }
     );
 

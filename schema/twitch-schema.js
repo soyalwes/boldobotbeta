@@ -1,18 +1,14 @@
 const { Schema, model } = require('mongoose')
 
-let warn = new Schema({
-    guildId: {
+const twitch = new Schema({
+    user: {
         type: String,
         required: true,
     },
-    userId: {
+    title: {
         type: String,
         required: true,
     },
-    warns: {
-        type: Number,
-        default: 0
-    }
-});
+})
 
-module.exports = model('warn', warn)
+module.exports = model("twitchSchema", twitch)

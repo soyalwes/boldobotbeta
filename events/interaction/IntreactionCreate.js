@@ -56,27 +56,10 @@ module.exports = {
             h.send({ embeds: [embedBorrTicket], components: [rowTicket] });
           });
       }
-      if (interaction.customId === "deleteTicket") {
-        const datos = await ticket.findOne({ guildId: interaction.guild.id });
-        let rolesStaff = datos.staffRoleId
-
-        if(interaction.member === interaction.user.id){
-          interaction.channel.permissionOverwrites.edit(interaction.user.id, {
-            SEND_MESSAGES: false,
-            ADD_REACTIONS: false,
-            VIEW_CHANNEL: false,
-          })
-          return interaction.reply({content:"Esperando a que un staff cierre el ticket"})
-        }
-        if(rolesStaff.comparePositionTo(interaction.member.roles.highest) > 0){
-          interaction.reply({content:"El canal va a ser borrado en 10 segundos"})
-          setTimeout((r) => {
-            interaction.channel.delete()
-
-          }, 10000)
-        }
+      if(interaction.customId === "deleteTicket"){
+        interaction.channel.delete()
       }
-    }
+      }
     console.log(
       `Una interacion a ocurrido en #${interaction.channel.name}\npor el usuario ${interaction.user.tag}\nen el servidor: ${interaction.guild.name}`
     );
