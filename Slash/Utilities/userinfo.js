@@ -29,6 +29,13 @@ module.exports = {
 
     let user = interaction.options.getMember("user") || interaction.member;
 
+    let state = {
+      "online" : "🟢|En linea",
+      "dnd": "🔴|No molestar",
+      "idle": "🟡|Ausente",
+      "ofline": "🚫|Desconectado",
+    }
+
     const userEmbed = new MessageEmbed()
       .setTitle(`Info de ${interaction.user.tag}`)
       .setThumbnail(user.displayAvatarURL({ dynamic: true }))
@@ -57,6 +64,10 @@ module.exports = {
       .addField(
         "🧛‍♂️|Roles del usuario",
         `${user.roles.cache.map((role) => role.toString()).join(", ")}`
+      )
+      .addField(
+        "👨‍💼|Estado",
+        `${state[user.presence.status]}`
       )
       .setColor("RANDOM")
       .setTimestamp();

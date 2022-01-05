@@ -18,21 +18,44 @@ module.exports = {
       cooldown.delete(interaction.member.id);
     }, 5000);
 
-    let user = await interaction.guild.members.fetch(interaction.targetId)
+    let user = await interaction.guild.members.fetch(interaction.targetId);
+
+    let state = {
+      "online" : "🟢|En linea",
+      "dnd": "🔴|No molestar",
+      "idle": "🟡|Ausente",
+      "ofline": "🚫|Desconectado",
+    }
 
     const userEmbed = new MessageEmbed()
-    .setTitle(`Info de ${interaction.user.tag}`)
-    .setThumbnail(user.displayAvatarURL({dynamic: true}))
-    .addField("🧔|Apodo", `${user.nickname ? user.nickname : "No tiene apodo"}`)
-    .addField("📌|TAG", `#${interaction.user.discriminator}`)
-    .addField("🆔|ID", `${interaction.user.id}`)
-    .addField("🔗|Link del avatar", `[Aqui](${interaction.user.displayAvatarURL()})`)
-    .addField("🕕|Datos de creacion", `<t:${Math.floor(interaction.user.createdAt / 1000)}>`)
-    .addField("🕣|Entrada al servidor", `<t:${Math.floor(user.joinedAt / 1000)}>`)
-    .addField("🧛‍♂️|Roles del usuario", `${user.roles.cache.map(role => role.toString()).join(", ")}`)
-    .setColor("RANDOM")
-    .setTimestamp()
+      .setTitle(`Info de ${interaction.user.tag}`)
+      .setThumbnail(user.displayAvatarURL({ dynamic: true }))
+      .addField(
+        "🧔|Apodo",
+        `${user.nickname ? user.nickname : "No tiene apodo"}`
+      )
+      .addField("📌|TAG", `#${interaction.user.discriminator}`)
+      .addField("🆔|ID", `${interaction.user.id}`)
+      .addField(
+        "🔗|Link del avatar",
+        `[Aqui](${interaction.user.displayAvatarURL()})`
+      )
+      .addField(
+        "🕕|Datos de creacion",
+        `<t:${Math.floor(interaction.user.createdAt / 1000)}>`
+      )
+      .addField(
+        "🕣|Entrada al servidor",
+        `<t:${Math.floor(user.joinedAt / 1000)}>`
+      )
+      .addField(
+        "🧛‍♂️|Roles del usuario",
+        `${user.roles.cache.map((role) => role.toString()).join(", ")}`
+      )
+      .addField("👨‍💼|Estado", `${state[user.presence.status]}`)
+      .setColor("RANDOM")
+      .setTimestamp();
 
-    interaction.reply({embeds:[userEmbed]})
+    interaction.reply({ embeds: [userEmbed] });
   },
 };
