@@ -28,7 +28,7 @@ module.exports = {
     }
 
     const userEmbed = new MessageEmbed()
-      .setTitle(`Info de ${interaction.user.tag}`)
+      .setTitle(`Info de ${user.tag}`)
       .setThumbnail(user.displayAvatarURL({ dynamic: true }))
       .addField(
         "🧔|Apodo",

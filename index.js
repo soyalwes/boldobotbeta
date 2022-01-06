@@ -37,6 +37,11 @@ for(const file of fs.readdirSync("./eventsDistub")){
   console.log(`Cargando eventos de distube ${file}`)
 
 }
+console.log(" ")
+
+for(const file of fs.readdirSync("./schema")){
+  console.log(`Cargando schemas ${file}`)
+}
 
 console.log(" ")
 

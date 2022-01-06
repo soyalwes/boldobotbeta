@@ -58,8 +58,10 @@ module.exports = {
         )
         .setColor("RED")
         .setTimestamp();
-
+        
+        setTimeout(() => {
       interaction.reply({ embeds: [embedMessDelet] });
+        }, 2000)
     } catch (e) {
       console.log(e);
 

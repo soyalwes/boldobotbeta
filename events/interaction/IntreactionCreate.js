@@ -56,10 +56,39 @@ module.exports = {
             h.send({ embeds: [embedBorrTicket], components: [rowTicket] });
           });
       }
-      if(interaction.customId === "deleteTicket"){
-        interaction.channel.delete()
+      if (interaction.customId === "deleteTicket") {
+        const embedBorrTicketfa = new Discord.MessageEmbed()
+        .setTitle("❌|Borrar ticket Auntentificacion")
+        .setDescription(`Auntentificando que el ticket sera borrado`)
+        .setColor("RED")
+        .setTimestamp();
+
+      const rowTicketfa = new Discord.MessageActionRow().addComponents(
+        new Discord.MessageButton()
+          .setCustomId("deleteTickettwoaf")
+          .setEmoji("❌")
+          .setLabel("Borrar ticket 2FA")
+          .setStyle("DANGER")
+      );
+        try {
+          interaction.channel.permissionOverwrites.edit(interaction.member, {
+            SEND_MESSAGES: false,
+            ADD_REACTIONS: false,
+          });
+          } catch (e) {
+            return interaction.reply({content:"Hubo un error, No puedo proseguir, Necesito permisos para editar permisos de canales"})
+          }
+          interaction.reply({content:"2FA activado"})
+        interaction.channel.send({ embeds: [embedBorrTicketfa], components: [rowTicketfa] });
       }
+      if(interaction.customId === "deleteTickettwoaf"){
+        interaction.reply({content:"Verificado correctamente, borrando el ticket en 10 segundos"})
+
+        setTimeout(() => {
+          interaction.channel.delete()
+        }, 10000)
       }
+    }
     console.log(
       `Una interacion a ocurrido en #${interaction.channel.name}\npor el usuario ${interaction.user.tag}\nen el servidor: ${interaction.guild.name}`
     );
