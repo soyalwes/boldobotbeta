@@ -8,7 +8,7 @@ module.exports = {
 
     let datos = await afk.findOne({
       guildId: message.guild.id,
-      userId: message.member.id,
+      userId: message.author.id,
     });
 
     if (!datos) return;
@@ -28,5 +28,14 @@ module.exports = {
       });
     }
 
+
+    if(message.content.startsWith(`${client.member}`)){
+      const embed = new Discord.MessageEmbed()
+      .setTitle("Buenardium")
+      .setDescrption(`Soy ${client.user} no tengo prefix\nTodos mis comandos estan en /`)
+      .setColor("BLUE")
+      
+      message.reply({embeds:[embed]})
+    }
   },
 };

@@ -7,6 +7,8 @@ let { config } = require("dotenv")
 
 config();
 
+console.log("Cargando slash")
+
 fs.readdirSync("./Slash").forEach(async(categorys) => {
   const slashCommandsFiles = fs.readdirSync(`./Slash/${categorys}`).filter(file => file.endsWith(".js"))
   for(const file of slashCommandsFiles){
@@ -14,7 +16,6 @@ fs.readdirSync("./Slash").forEach(async(categorys) => {
     slashCommands.push(slash.data.toJSON())
   }
 })
-
 const rest = new REST({ version: "9" }).setToken(process.env.token)
 
 createSlash()
@@ -26,7 +27,7 @@ async function createSlash(){
                 body: slashCommands
             }
         )
-        console.log(`Cargando Slash`)
+        console.log("Slash Cargados")
     } catch (e) {
         console.log(e)
     }

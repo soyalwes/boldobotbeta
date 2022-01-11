@@ -1,30 +1,15 @@
 const Discord = require("discord.js");
-const { SlashCommandBuilder } = require("@discordjs/builders");
+const { ContextMenuCommandBuilder } = require("@discordjs/builders");
 const { MessageEmbed } = require("discord.js");
 
 let cooldown = new Set();
 
 module.exports = {
-  data: new SlashCommandBuilder()
-    .setName("kick")
-    .setDescription("kickea a un usuario")
-    .addUserOption((option) =>
-      option
-        .setName("user")
-        .setDescription("Selecciona el usuario a quien kickear")
-        .setRequired(true)
-    )
-    .addStringOption((option) =>
-      option
-        .setName("reason")
-        .setDescription("Di la razon del kick")
-        .setRequired(false)
-    ),
+  data: new ContextMenuCommandBuilder().setName("kick").setType(2),
 
   async run(client, interaction) {
     if (cooldown.has(interaction.member.id)) {
       interaction.reply(`Estas en cooldown`);
-
       return;
     }
 
@@ -32,10 +17,7 @@ module.exports = {
     setTimeout(() => {
       cooldown.delete(interaction.member.id);
     }, 5000);
-
-    let user = interaction.option.getMember("user");
-
-    let reasson = interaction.option.getString("reason");
+    let user = await interaction.guild.members.fetch(interaction.targetId);
 
     let permsBot = interaction.guild.me.permissions.has("KICK_MEMBERS");
     if (!permsBot)
@@ -57,14 +39,14 @@ module.exports = {
       0
     )
       return interaction.reply({
-        content: "No puedes kickarte a alguien encima o igual tuyo",
+        content: "No puedes kickar a alguien por encima o igual a ti",
       });
 
     if (!user.kickable)
       return interaction.reply({ content: "No puedo kickear a ese usuario" });
 
     try {
-      interaction.guild.member.kick(user.id, { reason: reasson });
+      interaction.guild.member.kick(user.id, { reason: "No hay una razon" });
 
       const kickEmbed = new MessageEmbed()
         .setTitle("🏛|Kickeo")
@@ -75,6 +57,7 @@ module.exports = {
       interaction.reply({ embeds: [kickEmbed] });
     } catch (e) {
       console.log(e);
+
       const errorEmbed = new MessageEmbed()
         .setTitle("❌|Error")
         .setDescription("No se a podido kickear al miembro")
