@@ -55,7 +55,7 @@ module.exports = {
       if(datos){
         await logs.findOneAndUpdate({
           guildId: interaction.guild.id,
-          channelId: interaction.channel.id1,
+          channelId: interaction.channel.id,
           Status: false,
         });
 

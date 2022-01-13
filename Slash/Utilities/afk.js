@@ -63,6 +63,11 @@ module.exports = {
     });
 
     interaction.reply({embeds:[embedAfk]})
+    try{
+    interaction.member.setNickname(`${interaction.user.username}`)
+    }catch(e){
+      return
+    }
     }
   }
 
@@ -107,9 +112,11 @@ module.exports = {
 
         interaction.reply({ embeds: [embedAfk] });
 
-        setTimeout(() => {
-          interaction.channel.send({ content: `${interaction.member}` });
-        }, 5000);
+        try{
+          interaction.member.setNickname(`[AFK] ${interaction.user.username}`)
+        }catch (e){
+          return
+        }
       }
     }
   },

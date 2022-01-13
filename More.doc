@@ -54,12 +54,19 @@ module.exports = {
 };
 
 
+|---------------|
+|Event Structure|
+|---------------|
 
+const Discord = require("discord.js")
 
+module.export = {
+    name: "",
+    async execute(client) {
+    }
+}
 
-
-
-
+--------------------------------------
     if (!interaction.member.voice.channel)
       return interaction.reply({
         content: "Tienes que estar en un canal de voz",
