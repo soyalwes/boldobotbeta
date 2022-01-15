@@ -1,6 +1,9 @@
 const Discord = require("discord.js");
 
 const ticket = require("../../schema/tickets-schema");
+
+const captchas = require("../../schema/captcha-schema");
+
 module.exports = {
   name: "interactionCreate",
   async execute(client, interaction) {
@@ -58,35 +61,93 @@ module.exports = {
       }
       if (interaction.customId === "deleteTicket") {
         const embedBorrTicketfa = new Discord.MessageEmbed()
-        .setTitle("❌|Borrar ticket Auntentificacion")
-        .setDescription(`Auntentificando que el ticket sera borrado`)
-        .setColor("RED")
-        .setTimestamp();
+          .setTitle("❌|Borrar ticket Auntentificacion")
+          .setDescription(`Auntentificando que el ticket sera borrado`)
+          .setColor("RED")
+          .setTimestamp();
 
-      const rowTicketfa = new Discord.MessageActionRow().addComponents(
-        new Discord.MessageButton()
-          .setCustomId("deleteTickettwoaf")
-          .setEmoji("❌")
-          .setLabel("Borrar ticket 2FA")
-          .setStyle("DANGER")
-      );
+        const rowTicketfa = new Discord.MessageActionRow().addComponents(
+          new Discord.MessageButton()
+            .setCustomId("deleteTickettwoaf")
+            .setEmoji("❌")
+            .setLabel("Borrar ticket 2FA")
+            .setStyle("DANGER")
+        );
         try {
           interaction.channel.permissionOverwrites.edit(interaction.member, {
             SEND_MESSAGES: false,
             ADD_REACTIONS: false,
           });
-          } catch (e) {
-            return interaction.reply({content:"Hubo un error, No puedo proseguir, Necesito permisos para editar permisos de canales"})
-          }
-          interaction.reply({content:"2FA activado"})
-        interaction.channel.send({ embeds: [embedBorrTicketfa], components: [rowTicketfa] });
+        } catch (e) {
+          return interaction.reply({
+            content:
+              "Hubo un error, No puedo proseguir, Necesito permisos para editar permisos de canales",
+          });
+        }
+        interaction.reply({ content: "2FA activado" });
+        interaction.channel.send({
+          embeds: [embedBorrTicketfa],
+          components: [rowTicketfa],
+        });
       }
-      if(interaction.customId === "deleteTickettwoaf"){
-        interaction.reply({content:"Verificado correctamente, borrando el ticket en 10 segundos"})
+      if (interaction.customId === "deleteTickettwoaf") {
+        interaction.reply({
+          content:
+            "Verificado correctamente, borrando el ticket en 10 segundos",
+        });
 
         setTimeout(() => {
-          interaction.channel.delete()
-        }, 10000)
+          interaction.channel.delete();
+        }, 10000);
+      }
+      if (interaction.customId === "verf") {
+        let datos = await captchas.findOne({ guildId: interaction.guild.id });
+
+        const { Captcha } = require("captcha-canvas");
+
+        const captcha = new Captcha();
+        captcha.async = false;
+        captcha.addDecoy();
+        captcha.drawTrace();
+        captcha.drawCaptcha();
+
+        const attachment = new Discord.MessageAttachment(
+          captcha.png,
+          "captcha.png "
+        );
+
+        interaction.reply({
+          content: `${interaction.member}, Resuelve el siguiente captcha para verificarte [20s]`,
+          files: [attachment],
+          ephemeral: true,
+        });
+
+        const filter = (m) => m.author.id === interaction.user.id;
+
+        const collector = interaction.channel.createMessageCollector({
+          filter,
+          time: 20000,
+        });
+
+        collector.on("collect", async (m) => {
+          setTimeout(() => {
+            m.delete();
+          }, 10000);
+          if (m.content.startsWith(captcha.text)) {
+            interaction.member.roles.add(`${datos.roleId}`);
+          }
+          if (!m.content.startsWith(captcha.text)) {
+            collector.stop();
+
+            m.channel
+              .send({ content: "Captcha incorrecto" })
+              .then((message) => {
+                setTimeout(() => {
+                  message.delete();
+                }, 3000);
+              });
+          }
+        });
       }
     }
     console.log(

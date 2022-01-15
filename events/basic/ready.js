@@ -88,10 +88,6 @@ module.exports = {
         type: "COMPETING",
       },
       {
-        name: "2022",
-        type: "PLAYING",
-      },
-      {
         name: "Slash commands",
         type: "WATCHING",
       },
@@ -103,6 +99,10 @@ module.exports = {
         name: "Visita nuestro suport",
         type: "WATCHING",
       },
+      {
+        name: "Boldo beta 0.0.1",
+        type: "PLAYING"
+      }
     ];
 
     const activitirandom =
